@@ -1,0 +1,119 @@
+---
+title: "Intro to Time Series Analysis"
+author: "Benjamin W Nelson"
+date: "12/15/2018"
+output: html_document
+---
+
+#Note
+This includes notes taken from the DataCamp Introduction to Time Series Analysis Course.
+
+####This will cover four basic time series models.
+1. White Noise (WN)
+2. Random Walk (RW)
+3. Autogregression (AR)
+4. Simple Moving Average (MA)
+
+#Exploratory
+* First you should always use print() to see the Start, End, and Frequency of data
+* You can also use length() to see the number of observations
+* You should also use plot() to look at the data
+
+```{r}
+#plot(dataframe, xlab = "title", ylab = "title", type = "b") #note that type = "b" provides both data points and a line connecting each point
+```
+
+##Sampling Frequency Functions
+* start()- time index of the first observation
+* end()- time index of the last observation
+* frequency()- number of observations per unit time
+* deltat()- fixed time increment between observations
+* time()- calculates a vector of time indices, with one element for each time index on which the series was observed
+* cycle()- returns the position in the cycle of each observation
+* plot()- allows you to view the frequency of the data. This function has methods that automatically incorporate time index information into a figure.
+* ts.plot()
+
+###Examples
+Use the airpassengers dataset
+```{r}
+# Plot AirPassengers
+plot(AirPassengers)
+
+# View the start and end dates of AirPassengers
+start(AirPassengers)
+end(AirPassengers)
+
+# Use time(), deltat(), frequency(), and cycle() with AirPassengers 
+time(AirPassengers)
+deltat(AirPassengers)
+frequency(AirPassengers)
+cycle(AirPassengers)
+
+```
+
+
+#Sampling Frequency
+1. Exact- time series data is exactly evenly spaced (e.g., hourly observations)
+2. Approximate- time serues data that is approximately evenly spaced (e.g., temperature obsdrvations each time you check your email)
+3. Missing Values- time series data that has missing values
+
+#Basic Assumptions of Time Series Data
+1. Consecutive observations are evenly spaced
+2. Apply a discrete-time observation index
+3. These rules may only be true approximately (e.g., daily stock prices are only observed on weekdays and may not be available for certain holidays)
+
+#Basic Time Series Objects
+* ts()- this creates a time series object. This represents data that is at least approximatley evenly spaced across time. You can specify aspects of the ts() by adding information ts(dataframe, start = year, frequency = 1)
+* is.ts()- this checks whether a given object is a time series
+
+###Example 1
+```{r}
+#Simple Time Series
+data_vector <- c(10, 6, 11, 8, 10, 3, 6, 9)
+
+#Turn the data vector into time series
+time_series <- ts(data_vector)
+#plot time series
+plot(time_series)
+```
+
+###Example 2
+```{r}
+#Instead of starting with 1, you can start with a year and then specify the frequency of observations
+
+#Turn the data vector into time series
+time_series <- ts(data_vector, start = 2004, frequency = 1)
+#plot time series
+plot(time_series)
+```
+
+###Example 3
+```{r}
+#See if the data vector and time series are time series
+is.ts(data_vector) #false
+is.ts(time_series) #true
+```
+
+#Time Series Trends
+##Types of Trends
+1. Linear
+2. Rapid Growth
+3. Periodic or Sinusodial
+4. Variance (i.e., increasing or decreasing variance over time)
+
+##Data Filters to Transform or Remove Different Types of Data Trends
+1. log()- this is the natural logarithm transformation. This can linearize a Rapid Growth Trend. This can also stabalize a time series that shows increasing Variance Trend. The one restriction is that it can only be used for positively valued time series data. This is a data transformation that can be applied to positively valued time series data. It slightly shrinks observations that are greater than one towards zero, while greatly shrinking very large observations. This property can stabilize variability when a series exhibits increasing variability over time. It may also be used to linearize a rapid growth pattern over time.
+2. diff()- this is a difference transformation and it can remove linear trends. This will always have one fewer observation than the original time series data before it was transformed.
+3. diff(..., s= number)- this is for a periodic series. This removes periodic trends. For example if you want to remove seasonal trends (there are four seasons), then you set s = 4
+
+
+
+
+
+
+
+
+
+
+
+

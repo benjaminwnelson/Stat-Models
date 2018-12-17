@@ -8,6 +8,12 @@ output: html_document
 #Note
 This includes notes taken from the DataCamp Introduction to Time Series Analysis Course.
 
+###Load Packages
+```{r}
+library(psych)
+```
+
+
 ####This will cover four basic time series models.
 1. White Noise (WN)
 2. Random Walk (RW)
@@ -111,6 +117,35 @@ is.ts(time_series) #true
 ###Description:
 *Weak white noise* processes are fixed with a constant mean and constant variance and do not have a correlation over time. In other words, if the mean is not constant over time, the variance changes over time, or there seems to be a correlation between patterns in the data across time, then it is not White Noise.
 
+###Simulate WN Model
+```{r}
+#You can simulate WN model data by using arima.sim, which stands for autoregressive integrated moving average. Broad type of time series model that uses WN model as a case.
+WN_1 <- arima.sim(model = list(order = c(0, 0, 0)), n = 100)
+head(WN_1) #show some data
+ts.plot(WN_1) #plot data
+describe(WN_1) #The mean should be approx 0 and sd should be approx 1
 
 
+#You can also add additional arguments to specify the mean and sd
+WN_2 <- arima.sim(model = list(order = c(0, 0, 0)), n = 100,
+                  mean = 10,
+                  sd = 2)
+head(WN_2) #show some data
+ts.plot(WN_2) #plot data
+describe(WN_2) #The mean should be approx 10 and sd should be approx 2
+
+```
+
+###Estimate White Noise Model
+```{r}
+arima(WN_2, order = c(0, 0, 0)) #You can see that the mean should be approx 10
+# sigma^2 is an estiamte of the variance. The sd is the square root of this variance estimate.
+sqrt(3.84) #This should be the same as the sd
+
+#You can also find the mean and variance separately
+mean(WN_2)
+var(WN_2)
+```
+
+##Practice Simulating and Estimating WN Models
 

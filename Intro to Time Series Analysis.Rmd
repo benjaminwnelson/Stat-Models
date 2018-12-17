@@ -6,7 +6,7 @@ output: html_document
 ---
 
 #Note
-This includes notes taken from the DataCamp Introduction to Time Series Analysis Course.
+This includes notes taken from the DataCamp Introduction to Time Series Analysis Course. https://www.datacamp.com/courses/introduction-to-time-series-analysis
 
 ###Load Packages
 ```{r}
@@ -21,23 +21,23 @@ library(psych)
 4. Simple Moving Average (MA)
 
 #Exploratory
-* First you should always use print() to see the Start, End, and Frequency of data
-* You can also use length() to see the number of observations
-* You should also use plot() to look at the data
+_ First you should always use print() to see the Start, End, and Frequency of data
+_ You can also use length() to see the number of observations
+_ You should also use plot() to look at the data
 
 ```{r}
 #plot(dataframe, xlab = "title", ylab = "title", type = "b") #note that type = "b" provides both data points and a line connecting each point
 ```
 
 ##Sampling Frequency Functions
-* start()- time index of the first observation
-* end()- time index of the last observation
-* frequency()- number of observations per unit time
-* deltat()- fixed time increment between observations
-* time()- calculates a vector of time indices, with one element for each time index on which the series was observed
-* cycle()- returns the position in the cycle of each observation
-* plot()- allows you to view the frequency of the data. This function has methods that automatically incorporate time index information into a figure.
-* ts.plot()
+_ start()- time index of the first observation
+_ end()- time index of the last observation
+_ frequency()- number of observations per unit time
+_ deltat()- fixed time increment between observations
+_ time()- calculates a vector of time indices, with one element for each time index on which the series was observed
+_ cycle()- returns the position in the cycle of each observation
+_ plot()- allows you to view the frequency of the data. This function has methods that automatically incorporate time index information into a figure.
+_ ts.plot()
 
 ###Examples
 Use the airpassengers dataset
@@ -69,8 +69,8 @@ cycle(AirPassengers)
 3. These rules may only be true approximately (e.g., daily stock prices are only observed on weekdays and may not be available for certain holidays)
 
 #Basic Time Series Objects
-* ts()- this creates a time series object. This represents data that is at least approximatley evenly spaced across time. You can specify aspects of the ts() by adding information ts(dataframe, start = year, frequency = 1)
-* is.ts()- this checks whether a given object is a time series
+_ ts()- this creates a time series object. This represents data that is at least approximatley evenly spaced across time. You can specify aspects of the ts() by adding information ts(dataframe, start = year, frequency = 1)
+_ is.ts()- this checks whether a given object is a time series
 
 ###Example 1
 ```{r}
@@ -113,19 +113,21 @@ is.ts(time_series) #true
 3. diff(..., lag = s)- this is for a periodic series. This removes periodic trends. For example if you want to remove seasonal trends (there are four seasons), then you set lag = 4. If you want to remove monthly trends, then you set lag = 12. The default of diff() is lag = 1. Differenced series will have s fewer observations than the original dataset.
 
 
-#White Noise (WN) Model
+# 1. White Noise (WN) Model
 ###Description:
-*Weak white noise* This is a basic type of time serues model that is the basis for more complex time series models. The processes are fixed with a constant mean and constant variance and do not have a correlation over time. In other words, if the mean is not constant over time, the variance changes over time, or there seems to be a correlation between patterns in the data across time, then it is not White Noise.
+_Weak white noise_ This is a basic type of time serues model that is the basis for more complex time series models. The processes are fixed with a constant mean and constant variance and do not have a correlation over time. In other words, if the mean is not constant over time, the variance changes over time, or there seems to be a correlation between patterns in the data across time, then it is not White Noise.
+
+The WN Model is ARIMA(0,0,0)
 
 ###Simulate WN Model
 You can simulate WN model data by using arima.sim, which stands for autoregressive integrated moving average class of models. Broad type of time series model that uses WN model as a case.
 
-* ARIMA(p, d, q)
+_ ARIMA(p, d, q)
     + p- the autoregressive order
     + d- the order of integration or differencing
     + q- the moving average order
   
-* When all of these are 0, then it is a White Noise Model
+_ When all of these are 0, then it is a White Noise Model
 
 ```{r}
 WN_1 <- arima.sim(model = list(order = c(0, 0, 0)), n = 100)
@@ -147,7 +149,8 @@ describe(WN_2) #The mean should be approx 10 and sd should be approx 2
 ###Estimate White Noise Model
 ```{r}
 arima(WN_2, order = c(0, 0, 0)) #You can see that the mean should be approx 10
-# sigma^2 is an estiamte of the variance. The sd is the square root of this variance estimate.
+#Intercept is the estimated mean
+# sigma^2 is the estiamted variance. The sd is the square root of this variance estimate.
 sqrt(3.84) #This should be the same as the sd
 
 #You can also find the mean and variance separately
@@ -155,5 +158,66 @@ mean(WN_2)
 var(WN_2)
 ```
 
-##Practice Simulating and Estimating WN Models
+
+# 2. Random Walk (RW) Model
+###Desciption:
+_Random Walk Model_ This is an example of a non-stationary process. The RM Model has no specified mean or variance, has strong dependence over time (i.e., each observation is closely related to nearby observations), and changes follow a _White Noise_ pattern that is stable and stationary. Visually, short upwards and downward trends can occur.
+
+The RM Model is recursive white noise data. When you use diff(), then you remove the lng-term trend and end up with a _White Noise_ model
+
+The Random Walk Model is ARIMA(0,1,0). This shows that the order of integration of the model is __1__
+
+The Random Walk Model is defined recursively by
+
+_ Tomorrow = Today + Noise
+    + Note that Today = Tomorrow - 1
+_ Y~t~ = Y~t-1~ + e~t~
+    + e~t~ is white noise mean zero
+_ Therefore, Tomorrow - Tomorrow - 1 = diff(Y). In other words, Y~t~ - Y~t-1~ = e~t~
+
+When you simulate RW, this requires an initial point, which is usually 0
+
+You can also have a Random Walk with Drift (i.e., constant. If this is 0 then the time series moves around mean 0. If there is a positive drift coefficient or constant, then there will be an upward trend in the time series. If there is a negative drift coefficient or constant, then there will be a downward trend in the time series).
+
+_ Tomorrow = Constant + Today + Noise
+_ Y~t~ = c + Y~t-1~ + e~t~
+_ RW with Drift has two parameters. 1) the constant c and 2) the WN variance
+
+##Simulate Data
+###Example 1
+```{r}
+RM_1 <- arima.sim(model = list(order = c(0, 1, 0)), n = 100)
+head(RM_1)
+ts.plot(RM_1)
+
+#Calculate the first difference in the time series.
+diff_RM_1 <- diff(RM_1)
+ts.plot(diff_RM_1) #This shows that when you remove the long-term trend of the Random Walk data, then it becomes White Noise
+```
+
+###Example 2
+You can also add a drift by including an intercept in the Random Walk Model. This corresponds to the slope of the Random Walk time trend. This is done by adding the argument mean =
+```{r}
+rw_drift_pos <- arima.sim(model = list(order = c(0, 1, 0)), n = 100, mean = 1) #mean = 1, so it will be a positive slope
+ts.plot(rw_drift_pos)
+
+rw_drift_neg <- arima.sim(model = list(order = c(0, 1, 0)), n = 100, mean = -1) #mean = -1, so it will be a negative slope
+ts.plot(rw_drift_neg)
+
+#You can then also calculate the first difference of the drift
+
+rw_drift_diff_pos <- diff(rw_drift_pos)
+ts.plot(rw_drift_diff_pos)
+
+rw_drift_diff_neg <- diff(rw_drift_neg)
+ts.plot(rw_drift_diff_neg)
+```
+
+
+
+
+
+
+
+
 

@@ -104,7 +104,7 @@ is.ts(time_series) #true
 ##Data Filters to Transform or Remove Different Types of Data Trends
 1. log()- this is the natural logarithm transformation. This can linearize a Rapid Growth Trend. This can also stabalize a time series that shows increasing Variance Trend. The one restriction is that it can only be used for positively valued time series data. This is a data transformation that can be applied to positively valued time series data. It slightly shrinks observations that are greater than one towards zero, while greatly shrinking very large observations. This property can stabilize variability when a series exhibits increasing variability over time. It may also be used to linearize a rapid growth pattern over time.
 2. diff()- this is a difference transformation and it can remove linear trends. This will always have one fewer observation than the original time series data before it was transformed.
-3. diff(..., s= number)- this is for a periodic series. This removes periodic trends. For example if you want to remove seasonal trends (there are four seasons), then you set s = 4
+3. diff(..., s= number)- this is for a periodic series. This removes periodic trends. For example if you want to remove seasonal trends (there are four seasons), then you set s = 4. If you want to remove monthly trends, then you set s = 12. The default of diff() is s = 1.
 
 
 

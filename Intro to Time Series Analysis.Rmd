@@ -69,7 +69,7 @@ cycle(AirPassengers)
 ###Example 1
 ```{r}
 #Simple Time Series
-data_vector <- c(10, 6, 11, 8, 10, 3, 6, 9)
+data_vector <- c(10, 6, 6, 8, 20, 3, 6, 9)
 
 #Turn the data vector into time series
 time_series <- ts(data_vector)
@@ -105,3 +105,11 @@ is.ts(time_series) #true
 1. log()- this is the natural logarithm transformation. This can linearize a Rapid Growth Trend. This can also stabalize a time series that shows increasing Variance Trend (i.e., variability over time). The one restriction is that it can only be used for positively valued time series data. This will shrink observations greater than one towards zero by small increments and shrink large observations towards zero by greater increments.
 2. diff()- this is a difference transformation and it can remove linear trends. This will always have one fewer observation than the original time series data before it was transformed.
 3. diff(..., lag = s)- this is for a periodic series. This removes periodic trends. For example if you want to remove seasonal trends (there are four seasons), then you set lag = 4. If you want to remove monthly trends, then you set lag = 12. The default of diff() is lag = 1. Differenced series will have s fewer observations than the original dataset.
+
+
+#White Noise (WN) Model
+###Description:
+*Weak white noise* processes are fixed with a constant mean and constant variance and do not have a correlation over time. In other words, if the mean is not constant over time, the variance changes over time, or there seems to be a correlation between patterns in the data across time, then it is not White Noise.
+
+
+

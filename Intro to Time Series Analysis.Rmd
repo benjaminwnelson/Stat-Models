@@ -115,11 +115,19 @@ is.ts(time_series) #true
 
 #White Noise (WN) Model
 ###Description:
-*Weak white noise* processes are fixed with a constant mean and constant variance and do not have a correlation over time. In other words, if the mean is not constant over time, the variance changes over time, or there seems to be a correlation between patterns in the data across time, then it is not White Noise.
+*Weak white noise* This is a basic type of time serues model that is the basis for more complex time series models. The processes are fixed with a constant mean and constant variance and do not have a correlation over time. In other words, if the mean is not constant over time, the variance changes over time, or there seems to be a correlation between patterns in the data across time, then it is not White Noise.
 
 ###Simulate WN Model
+You can simulate WN model data by using arima.sim, which stands for autoregressive integrated moving average class of models. Broad type of time series model that uses WN model as a case.
+
+* ARIMA(p, d, q)
+    + p- the autoregressive order
+    + d- the order of integration or differencing
+    + q- the moving average order
+  
+* When all of these are 0, then it is a White Noise Model
+
 ```{r}
-#You can simulate WN model data by using arima.sim, which stands for autoregressive integrated moving average. Broad type of time series model that uses WN model as a case.
 WN_1 <- arima.sim(model = list(order = c(0, 0, 0)), n = 100)
 head(WN_1) #show some data
 ts.plot(WN_1) #plot data

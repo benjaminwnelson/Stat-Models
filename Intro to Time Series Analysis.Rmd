@@ -21,23 +21,23 @@ library(psych)
 4. Simple Moving Average (MA)
 
 #Exploratory
-_ First you should always use print() to see the Start, End, and Frequency of data
-_ You can also use length() to see the number of observations
-_ You should also use plot() to look at the data
+* First you should always use print() to see the Start, End, and Frequency of data
+* You can also use length() to see the number of observations
+* You should also use plot() to look at the data
 
 ```{r}
 #plot(dataframe, xlab = "title", ylab = "title", type = "b") #note that type = "b" provides both data points and a line connecting each point
 ```
 
 ##Sampling Frequency Functions
-_ start()- time index of the first observation
-_ end()- time index of the last observation
-_ frequency()- number of observations per unit time
-_ deltat()- fixed time increment between observations
-_ time()- calculates a vector of time indices, with one element for each time index on which the series was observed
-_ cycle()- returns the position in the cycle of each observation
-_ plot()- allows you to view the frequency of the data. This function has methods that automatically incorporate time index information into a figure.
-_ ts.plot()
+* start()- time index of the first observation
+* end()- time index of the last observation
+* frequency()- number of observations per unit time
+* deltat()- fixed time increment between observations
+* time()- calculates a vector of time indices, with one element for each time index on which the series was observed
+* cycle()- returns the position in the cycle of each observation
+* plot()- allows you to view the frequency of the data. This function has methods that automatically incorporate time index information into a figure.
+* ts.plot()
 
 ###Examples
 Use the airpassengers dataset
@@ -69,8 +69,8 @@ cycle(AirPassengers)
 3. These rules may only be true approximately (e.g., daily stock prices are only observed on weekdays and may not be available for certain holidays)
 
 #Basic Time Series Objects
-_ ts()- this creates a time series object. This represents data that is at least approximatley evenly spaced across time. You can specify aspects of the ts() by adding information ts(dataframe, start = year, frequency = 1)
-_ is.ts()- this checks whether a given object is a time series
+* ts()- this creates a time series object. This represents data that is at least approximatley evenly spaced across time. You can specify aspects of the ts() by adding information ts(dataframe, start = year, frequency = 1)
+* is.ts()- this checks whether a given object is a time series
 
 ###Example 1
 ```{r}
@@ -122,12 +122,12 @@ The WN Model is ARIMA(0,0,0)
 ###Simulate WN Model
 You can simulate WN model data by using arima.sim, which stands for autoregressive integrated moving average class of models. Broad type of time series model that uses WN model as a case.
 
-_ ARIMA(p, d, q)
+* ARIMA(p, d, q)
     + p- the autoregressive order
     + d- the order of integration or differencing
     + q- the moving average order
   
-_ When all of these are 0, then it is a White Noise Model
+* When all of these are 0, then it is a White Noise Model
 
 ```{r}
 WN_1 <- arima.sim(model = list(order = c(0, 0, 0)), n = 100)
@@ -169,11 +169,11 @@ The Random Walk Model is ARIMA(0,1,0). This shows that the order of integration 
 
 The Random Walk Model is defined recursively by
 
-_ Tomorrow = Today + Noise
+* Tomorrow = Today + Noise
     + Note that Today = Tomorrow - 1
-_ Y~t~ = Y~t-1~ + e~t~
+* Y~t~ = Y~t-1~ + e~t~
     + e~t~ is white noise mean zero
-_ Therefore, Tomorrow - Tomorrow - 1 = diff(Y). In other words, Y~t~ - Y~t-1~ = e~t~
+* Therefore, Tomorrow - Tomorrow - 1 = diff(Y). In other words, Y~t~ - Y~t-1~ = e~t~
 
 When you simulate RW, this requires an initial point, which is usually 0
 
@@ -209,12 +209,35 @@ ts.plot(rw_drift_neg)
 rw_drift_diff_pos <- diff(rw_drift_pos)
 ts.plot(rw_drift_diff_pos)
 
-rw_drift_diff_neg <- diff(rw_drift_neg)
-ts.plot(rw_drift_diff_neg)
+#You can then fit each model
+model_pos <- arima(rw_drift_diff_pos)
+model_pos
+
+#Save the estimated time trend, which is the intercept
+intercept_pos <- model_pos$coef
+intercept_pos
+
+#Now that you have the estimated coefficient or time trend, you can add the estimated time trend to the original data
+ts.plot(rw_drift_pos) + 
+abline(0, intercept_pos)
+
 ```
 
+##Stationarity
 
+_ "Stationary processes have distributional stability over time"
+_ Time Series may "fluctuate randomly", "but behave similarly from one time point to the next"
+_ Departures from stationarity include "time trends, periodicity, and a lack of mean reversion"
+    + Note: mean reversion just indicates that the time series tends to move around the mean.
 
+_Types of Stationarity_
+
+1. __Weak Stationary__: The mean, variance, and covariance are constant over time. In other words, the mean, variance, and covariance are not changed by time shifts. For example the covariance between Time 1 and Time 7 should be similar to the covariance between Time 8 and Time 14, because they are both six time units apart
+
+_Purpose of Stationary Models_
+
+1. They can be "modeled with fewer parameters"
+2. Don't need a different mean for each observation, rather each observation has a common mean
 
 
 

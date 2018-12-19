@@ -181,9 +181,9 @@ When you simulate RW, this requires an initial point, which is usually 0
 
 You can also have a Random Walk with Drift (i.e., constant. If this is 0 then the time series moves around mean 0. If there is a positive drift coefficient or constant, then there will be an upward trend in the time series. If there is a negative drift coefficient or constant, then there will be a downward trend in the time series).
 
-_ Tomorrow = Constant + Today + Noise
-_ Y~t~ = c + Y~t-1~ + e~t~
-_ RW with Drift has two parameters. 1) the constant c and 2) the WN variance
+* Tomorrow = Constant + Today + Noise
+* Y~t~ = c + Y~t-1~ + e~t~
+* RW with Drift has two parameters. 1) the constant c and 2) the WN variance
 
 ##Simulate Data
 ###Example 1
@@ -227,9 +227,9 @@ abline(0, intercept_pos)
 
 ##Stationarity
 
-_ "Stationary processes have distributional stability over time"
-_ Time Series may "fluctuate randomly", "but behave similarly from one time point to the next"
-_ Departures from stationarity include "time trends, periodicity, and a lack of mean reversion"
+* "Stationary processes have distributional stability over time"
+* Time Series may "fluctuate randomly", "but behave similarly from one time point to the next"
+* Departures from stationarity include "time trends, periodicity, and a lack of mean reversion"
     + Note: mean reversion just indicates that the time series tends to move around the mean.
 
 _Types of Stationarity_
@@ -264,6 +264,7 @@ plot.ts(cbind(white_noise, random_walk, wn_drift, rw_drift)) #note when you want
 
 #Scatterplots
 ```{r}
+library(tibble)
 stocks <- as.tibble(EuStockMarkets)
 stocks
 dax <- stocks$DAX
@@ -314,18 +315,8 @@ cov(dax, smi) / (sd(dax) * sd(smi)) #This is the covariance divided by the sd of
 _Autocorrelation_ This is a powerful tool for time series analysis. This helps to determine how each time series observation is related to it's recent past. Processes with greater autocorrelation are more predictable than processes with none.
 
 ###Example
-Lets look at a Lag 1 Autocorrelation. This is the correlation of the stock today with it's price yesterday
-```{r}
-cor(dax[-100], dax[-1]) #This is .99, which indicates that if the price yesterday was high, then the price today should be high
 
-```
-
-Lets look at Lag 2 Autocorrelation. This is the correlation of the stock today with it's price two days ago
-```{r}
-cor(dax[-(99:100)], dax[-(1:2)])
-```
-
-You can also look at Autocorrelations at lag 1 and lag 2 with the Autocorrelation Function acf()
+You can look at Autocorrelations at lag 1 and lag 2 with the Autocorrelation Function acf()
 ```{r}
 acf(dax, lag.max = 10, plot = FALSE) #You can see that as the lag increases, the past lag has a lower correlation with the more recent price. In other words, today's price perfectly predicts today's price. Yesterday's price almost perfectly predicts today's price. Lastly, the price from two days ago, still strongly predicts today's price, but not as well as one day ago.
 
@@ -333,9 +324,17 @@ acf(dax, lag.max = 10, plot = FALSE) #You can see that as the lag increases, the
 acf(dax, lag.max = 100, plot = TRUE) #You can also view this graphically by using plot = TRUE. In this example, I used a larger lag.max, so differences can be perceivable
 ```
 
+##The Autoregressive Model
+###Description:
+Focus on the easiest Autoregressive (AR) model where today's observation is regressed onto yesterday's observation
 
+The Autoregressive Model is defined recursively by
 
+* Today = Constant + Slope*Yesterday + Noise
 
+The Mean Centered Version
+
+* (Today - Mean) = Slope * (Yesterday - Mean) + Noise
 
 
 

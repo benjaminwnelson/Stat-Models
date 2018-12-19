@@ -185,6 +185,11 @@ You can also have a Random Walk with Drift (i.e., constant. If this is 0 then th
 * Y~t~ = c + Y~t-1~ + e~t~
 * RW with Drift has two parameters. 1) the constant c and 2) the WN variance
 
+* ARIMA(p, d, q)
+    + p- the autoregressive order
+    + d- the order of integration or differencing
+    + q- the moving average order
+
 ##Simulate Data
 ###Example 1
 ```{r}
@@ -314,6 +319,11 @@ cov(dax, smi) / (sd(dax) * sd(smi)) #This is the covariance divided by the sd of
 ###Description:
 _Autocorrelation_ This is a powerful tool for time series analysis. This helps to determine how each time series observation is related to it's recent past. Processes with greater autocorrelation are more predictable than processes with none.
 
+* ARIMA(p, d, q)
+    + p- the autoregressive order
+    + d- the order of integration or differencing
+    + q- the moving average order
+
 ###Example
 
 You can look at Autocorrelations at lag 1 and lag 2 with the Autocorrelation Function acf()
@@ -326,7 +336,9 @@ acf(dax, lag.max = 100, plot = TRUE) #You can also view this graphically by usin
 
 ##The Autoregressive Model
 ###Description:
-Focus on the easiest Autoregressive (AR) model where today's observation is regressed onto yesterday's observation
+The AR Model is the most commonly utilized time series model. Each observation is regressed onto the prior observation, so it is similar in interpretation to linear regression. The AR Model includes WN and RW models as special cases.
+
+Focus on the easiest Autoregressive (AR) model where today's observation is regressed onto yesterday's observation.
 
 The Autoregressive Model is defined recursively by
 
@@ -335,6 +347,27 @@ The Autoregressive Model is defined recursively by
 The Mean Centered Version
 
 * (Today - Mean) = Slope * (Yesterday - Mean) + Noise
+
+You can simular an AR model by using list(ar = phi). Here phi is the slope of the interval (-1, 1).
+
+###Example 1
+You want to set a slope of .5. Then phi will be .5
+```{r}
+#AR Model with a 0.9 Slope
+a <- arima.sim(model = list(ar = 0.9), n = 100) #This has large autocorrelation
+
+#AR Model with a 0.0 slope
+b <- arima.sim(model = list(ar = 0), n = 100) #This has lower autocorrelation
+
+#AR Model with a -0.9 slope
+c <- arima.sim(model = list(ar = -0.9), n = 100) #This moves around lots across observations
+
+#Plot all simulated data
+plot.ts(cbind(a,b,c))
+
+#You can tell here larger autocorrelations approach 1, while more erratic autocorrelations approach -1. In other words, time series A has high autocorrelation, while time series C has low autocorrelation
+```
+
 
 
 

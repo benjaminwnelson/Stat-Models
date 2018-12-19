@@ -275,8 +275,57 @@ ts.plot(cbind(dax, smi))
 
 plot(dax,smi)
 
+apply(stocks, MARGIN = 2, FUN = var) #looking at variance
+apply(stocks, MARGIN = 2, FUN = sd) #looking at sd
+
+pairs(stocks) #scatterplot matrix
+plot(stocks)
+
+ts.plot(stocks)
+
+
 
 ```
+
+#Covariance and Correlation
+```{r}
+#mean and sd
+mean(dax)
+sd(dax)
+
+mean(smi)
+sd(smi)
+
+#Covariance of these stocks. These depend of the scale of the variables
+cov(dax, smi)
+
+#Correlation of these stocks. These do not depend on the scale of the variables. These are standardized.
+cor(dax, smi)
+
+#You can see the relationship between covariance and correlation here
+cov(dax, smi) / (sd(dax) * sd(smi))
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

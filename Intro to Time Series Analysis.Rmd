@@ -552,5 +552,151 @@ _Description_
 
 "A weighted sum of current previous noise is called a simple moving average process". Focus on a simple first order case where today's observation is regressed onto yesterday's noise
 
+It can be used for very short-run autocorrelations
+
 * Large values of slope are associated with greater autocorrelation
 * Negative values of the slope are associated in oscillatory time series
+
+ARIMA(0, 0, 1)
+
+###Example 1
+```{r}
+# MA model with slope 0.9
+x <- arima.sim(model = list(ma = 0.9), n = 100)
+
+# MA model with slope 0.0
+y <- arima.sim(model = list(ma = 0.0), n = 100)
+
+
+# MA model with slope -0.9
+z <- arima.sim(model = list(ma = -0.9), n = 100)
+
+
+# Plot all three models together
+plot.ts(cbind(x, y, z))
+
+#There is some short run persistence
+
+```
+
+Now estimate the model
+```{r}
+acf(x) #At the first lag this has a positive autocorrelation, then it is approximately 0 at other lags
+acf(y) #At the first lag it has a large sample autocorrelation, then it is approxumately 0 at other lags
+acf(z) #This has an alternating pattern
+```
+
+##MA Model Estimation
+
+###Example 1
+
+Use the inflation dataset
+```{r}
+inflation_changes <- diff(inflation)
+ts.plot(inflation) ; ts.plot(inflation_changes)
+acf(inflation_changes, lag.max = 24)
+#You can see a negative autocorrelation at lag 1 and then almost no autocorrelation at later lags
+```
+
+Apply arima function
+```{r}
+ma_inflation_changes <- arima(inflation_changes, order = c(0,0,1)) #This is first order MA Model
+ma_inflation_changes
+```
+
+Plot the fitted values
+```{r}
+ts.plot(inflation_changes)
+ma_inflation_changes_fitted <- inflation_changes - residuals(ma_inflation_changes)
+points(ma_inflation_changes_fitted, type = "l", col = "red", lty = 2)
+```
+
+##MA Model Forecasting
+```{r}
+#1 step ahead forecast
+predict(ma_inflation_changes)
+
+#6 steps ahead
+predict(ma_inflation_changes, n.ahead = 6)
+```
+
+
+##Example 1
+```{r}
+# Fit an MA model for Nile
+MA <- arima(Nile, order = c(0,0,1))
+print(MA)
+
+# Plot the Nile time series data and the MA_fit 
+ts.plot(Nile)
+MA_fit <- Nile - resid(MA)
+points(MA_fit, type = "l", col = 2, lty = 2)
+
+```
+
+##Example 2
+Predict future observations
+
+```{r}
+# 1-step forecast based on MA
+predict_MA <- predict(MA)
+
+# View 1-step forecast using $pred[1]
+predict_MA$pred[1]
+
+# 10-step forecast based on MA
+predict(MA, n.ahead = 10)
+
+# Plot the Nile series plus the forecast and 95% prediction intervals
+ts.plot(Nile, xlim = c(1871, 1980))
+MA_forecasts <- predict(MA, n.ahead = 10)$pred
+MA_forecast_se <- predict(MA, n.ahead = 10)$se
+points(MA_forecasts, type = "l", col = 2)
+points(MA_forecasts - 2*MA_forecast_se, type = "l", col = 2, lty = 2)
+points(MA_forecasts + 2*MA_forecast_se, type = "l", col = 2, lty = 2)
+
+```
+
+
+
+#Compare AR and MA Models
+
+_Description_
+
+* Both have mean 0 White Noise terms with sigma squared as the variance parameter
+* Both include a mean parameter mu
+* MA Model has autocorrelation at one lag
+* AR Model has autocorrelation at many lags
+
+##Figure out whether AR Model or MA Model is Better
+
+* Use AIC and BIC
+* These are commonly used in time series data
+* Lower value indicates a better fitting model
+
+Look at MA Inflation Changes
+```{r}
+ma_inflation_changes <- arima(inflation_changes, order = c(0,0,1))
+ma_inflation_changes
+AIC(ma_inflation_changes)
+BIC(ma_inflation_changes)
+
+```
+
+Look at AR Inflation Changes
+```{r}
+ar_inflation_changes <- arima(inflation_changes, order = c(1,0,0))
+ar_inflation_changes
+AIC(ar_inflation_changes)
+BIC(ar_inflation_changes)
+```
+
+These show that the MA Model provides a better fit than the AR Model, because the AIC and BIC are lower
+
+
+
+##Compare Whether AR or MA is Better
+
+* Use goodness of fit, such as information criterion
+* This is more advanced than AIC and BIC
+

@@ -303,15 +303,35 @@ cov(dax, smi)
 cor(dax, smi)
 
 #You can see the relationship between covariance and correlation here
-cov(dax, smi) / (sd(dax) * sd(smi))
+cov(dax, smi) / (sd(dax) * sd(smi)) #This is the covariance divided by the sd of each variable
+
 
 
 ```
 
+# 3. Autocorrelation
+###Description:
+_Autocorrelation_ This is a powerful tool for time series analysis. This helps to determine how each time series observation is related to it's recent past. Processes with greater autocorrelation are more predictable than processes with none.
 
+###Example
+Lets look at a Lag 1 Autocorrelation. This is the correlation of the stock today with it's price yesterday
+```{r}
+cor(dax[-100], dax[-1]) #This is .99, which indicates that if the price yesterday was high, then the price today should be high
 
+```
 
+Lets look at Lag 2 Autocorrelation. This is the correlation of the stock today with it's price two days ago
+```{r}
+cor(dax[-(99:100)], dax[-(1:2)])
+```
 
+You can also look at Autocorrelations at lag 1 and lag 2 with the Autocorrelation Function acf()
+```{r}
+acf(dax, lag.max = 10, plot = FALSE) #You can see that as the lag increases, the past lag has a lower correlation with the more recent price. In other words, today's price perfectly predicts today's price. Yesterday's price almost perfectly predicts today's price. Lastly, the price from two days ago, still strongly predicts today's price, but not as well as one day ago.
+
+#Create an acf plot
+acf(dax, lag.max = 100, plot = TRUE) #You can also view this graphically by using plot = TRUE. In this example, I used a larger lag.max, so differences can be perceivable
+```
 
 
 

@@ -167,6 +167,8 @@ The RM Model is recursive white noise data. When you use diff(), then you remove
 
 The Random Walk Model is ARIMA(0,1,0). This shows that the order of integration of the model is __1__
 
+RW is always non-stationary whether or not it has a drift term
+
 The Random Walk Model is defined recursively by
 
 * Tomorrow = Today + Noise
@@ -240,6 +242,41 @@ _Purpose of Stationary Models_
 2. Don't need a different mean for each observation, rather each observation has a common mean
 
 
+##Example 3
+You can use cumsum() to transform a WM to a RM
+```{r}
+# Generate Data
+white_noise <- arima.sim(model = list(order = c(0,0,0)), n = 100)
+
+#Transform WN data to RW using cumsum()
+random_walk <- cumsum(white_noise)
+
+# Generate WN drift data
+wn_drift <- arima.sim(model = list(order = c(0,0,0)), n = 100, mean = 0.4)
+  
+#Transform WN data to RW using cumsum()
+rw_drift <- cumsum(wn_drift)
+
+# Plot
+plot.ts(cbind(white_noise, random_walk, wn_drift, rw_drift)) #note when you want to plot more than one time series use cbind(model_1, model_2, etc.) and enter the time series
+
+```
+
+#Scatterplots
+```{r}
+stocks <- as.tibble(EuStockMarkets)
+stocks
+dax <- stocks$DAX
+smi <- stocks$SMI
+
+ts.plot(dax)
+ts.plot(smi)
+ts.plot(cbind(dax, smi))
+
+plot(dax,smi)
+
+
+```
 
 
 

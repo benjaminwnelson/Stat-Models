@@ -350,6 +350,8 @@ The Mean Centered Version
 
 You can simular an AR model by using list(ar = phi). Here phi is the slope of the interval (-1, 1).
 
+Note than an AR Model is an ARIMA (1,0,0) model
+
 ###Example 1
 You want to set a slope of .5. Then phi will be .5
 ```{r}
@@ -365,20 +367,190 @@ c <- arima.sim(model = list(ar = -0.9), n = 100) #This moves around lots across 
 #Plot all simulated data
 plot.ts(cbind(a,b,c))
 
-#You can tell here larger autocorrelations approach 1, while more erratic autocorrelations approach -1. In other words, time series A has high autocorrelation, while time series C has low autocorrelation
+#You can tell here larger autocorrelations approach 1, while more erratic autocorrelations approach -1. In other words, time series A has high autocorrelation, while time series C has low autocorrelation. In addition, the AR Model has higher persistence close to 1
+```
+
+Now estimate the autocorrelation function
+```{r}
+#You can see the autocorrelation in these figures
+acf(a)
+acf(b)
+acf(c)
+```
+
+##Persistence and Anti-Persistence
+_Description_
+
+* AR Models can have different levels of persistence and anti-persistence/oscillatory behavior
+* Persistence- defined as a high correlation between observation and it's lag
+* Anti-Persistence- defined by large amount of variation between an obsrvation and its lag
+
+###Example 2
+
+* Compare the RW and AR Models
+
+```{r}
+# Simulate and plot AR model with slope 0.9 
+d <- arima.sim(model = list(ar = 0.9), n = 200)
+ts.plot(d)
+acf(d)
+
+# Simulate and plot AR model with slope 0.98
+e <- arima.sim(model = list(ar = 0.98), n = 200)
+ts.plot(e)
+acf(e)
+
+# Simulate and plot RW model
+f <- arima.sim(model = list(order = c(0, 1, 0)), n = 200)
+ts.plot(f)
+acf(f)
+
+ts.plot(cbind(d,e,f))
+
+#Note that you can see that Series E has greater persistence than Series D, while the RW Model of series Z showes lits of persistence and little decay
+```
+
+##AR Model Estimation
+
+###Example 1
+```{r}
+data(Mishkin, package = "Ecdat")
+inflation <- as.ts(Mishkin[,1]) #Inflation rate is the first column in the Mishkin dataset. This is extracting just that column
+ts.plot(inflation) ; acf(inflation)
+```
+
+Now use an AR Model on the inflation rate
+```{r}
+ar_inflation <- arima(inflation, order = c(1,0,0)) #1,0,0 indicates a first order AR Model
+ar_inflation
+#ar1 = 0.596
+#intercept = 3.9745
+#Sigma Squared is 9.713
+
+#AR1 referes to estimate of slope parameter phi. Slope
+#Intercept is estimate of the mean parameter mu. Mean
+#Sigma Squared is estimation of the innovation variance. Variance
+```
+
+Now run a Fitted AR Model. Use a model where you are predicting today from yesterday.
+```{r}
+ts.plot(inflation)
+ar_inflation_fitted <- inflation - residuals(ar_inflation) #The fitted values are equal to the observations - the residuals. In other words, you just used the arima(inflation, order = c(1,0,0)) to estimate the time series, which had error or residuals. You can then create fitted values by observations - model error
+points(ar_inflation_fitted, type = "l", col = "red", lty = 2) #This shows that there is a close relationship between the fitted values y hat and the data series y. The red are the fitted values
+```
+
+###Example 2
+```{r}
+#Fit the AR model to the AirPassengers dataset
+
+AR <- arima(AirPassengers, order = c(1,0,0))
+print(AR)
+
+#Now plot the series and fitted values
+ts.plot(AirPassengers)
+AR_fitted <- AirPassengers - residuals(AR)
+points(AR_fitted, type = "l", col = 2, lty = 2) #This is adding the fitted points to the plot of AirPassengers
+#This shows that you modeled the data sucessfully and can predict future observations with the AR_fitted data
+
 ```
 
 
 
+##AR Model Forecasting
+
+* You can use predict() to make model forecasts from the last observation in the inflation series
+
+###Example 1
+
+*Forecast 1-step ahead in the time series
+```{r}
+predict(ar_inflation)
+```
+
+Now you can also predict h-step ahead. For example, if you want to predict the next 6 observations
+```{r}
+predict(ar_inflation, n.ahead = 10)
+```
+
+###Example 2
+
+* In the predict() command $pred is the forcast value and $se is the forecast se
+* n.ahead(h) lets you make predictions ahead of time by the value of h (ex. one day ahead forecast, then h = 1)
+
+```{r}
+#Use the Nile data
+
+# Create an AR Model to Fit the Nile data
+AR_fit <-arima(Nile, order  = c(1,0,0))
+print(AR_fit)
+
+# Make a 1-step forecast
+predict_AR <- predict(AR_fit, n.ahead = 1)
+predict_AR
+
+# Look at 1-step forecast using $pred[1]
+predict_AR$pred[1]
+
+# Make 10-step forecast
+predict(AR_fit, n.ahead = 10)
+
+# Run to plot the Nile series plus the forecast and 95% prediction intervals
+ts.plot(Nile, xlim = c(1871, 1980))
+AR_forecast <- predict(AR_fit, n.ahead = 10)$pred
+AR_forecast_se <- predict(AR_fit, n.ahead = 10)$se
+points(AR_forecast, type = "l", col = 2) #This is the forcast
+points(AR_forecast - 2*AR_forecast_se, type = "l", col = 2, lty = 2) #This is -2 se forecast
+points(AR_forecast + 2*AR_forecast_se, type = "l", col = 2, lty = 2) #This is +2 se forecast
+
+#You can see that the confidence itnerval is very wide, which indicates lower persistence in the model
+
+```
+
+###Summarize Steps
+
+__Step 1: Plot the Time Series Data__
+
+ts.plot(data.frame)
+
+
+__Step 2: Fit an AR Model to the Time Series Data__
+
+ar_model_fit <-arima(data.frame, order  = c(1,0,0))
+print(AR_model_fit)
 
 
 
+__Step 3: Run a Fitted Model of the Time Series based on the AR Model__
+
+ar_model_fitted <- data.frame - residuals(ar_model_fit) #The fitted values are equal to the observations - the residuals. In other words, you just used the arima(inflation, order = c(1,0,0)) to estimate the time series, which had error or residuals. You can then create fitted values by observations - model error
+points(ar_model_fitted, type = "l", col = "red", lty = 2) #This will create a plot of how well your ar_model_fit matches the Time Series Data
+
+
+__Step 4: Make a Forecast Model that Predicts Future Points__
+
+Make 10-step forecast
+
+predict(ar_model_fit, n.ahead = 10)
+
+
+__Step 5: Plot the Forecast onto the Original Time Series Data__
+
+Run to plot the Nile series plus the forecast and 95% prediction intervals
+
+ts.plot(data.frame, xlim = c(1871, 1980)) #xlim is just selecting the limits of the x axis
+ar_forecast <- predict(ar_model_fit, n.ahead = 10)$pred
+ar_forecast_se <- predict(ar_model_fit, n.ahead = 10)$se
+points(ar_forecast, type = "l", col = 2) #This is the forcast
+points(ar_forecast - 2*AR_forecast_se, type = "l", col = 2, lty = 2) #This is -2 se forecast
+points(ar_forecast + 2*AR_forecast_se, type = "l", col = 2, lty = 2) #This is +2 se forecast
 
 
 
+#The Simple Moving Average Model
 
+_Description_
 
+"A weighted sum of current previous noise is called a simple moving average process". Focus on a simple first order case where today's observation is regressed onto yesterday's noise
 
-
-
-
+* Large values of slope are associated with greater autocorrelation
+* Negative values of the slope are associated in oscillatory time series

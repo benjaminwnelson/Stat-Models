@@ -11,25 +11,50 @@ https://www.datacamp.com/courses/manipulating-time-series-data-in-r-with-xts-zoo
 
 #Load Packages
 ```{r}
-library(psych); library(xts)
+library(psych); library(xts); library(zoo)
 ```
 
-#xts and zoo objects
+#Basics
+
+* Create a time series vector
+
+```{r}
+#create a time series vector called dates
+
+#Option 1
+dates <- seq(as.Date("2017-01-01"), length = 100, by = "days") #This creates a vector that starts at the date entered that is followed by days that allows there to be 100 date observations. length = x specifies the length of the vector. by = "" specifies whether each subsequent observation is by day, week, etc.
+dates
+
+#Option 2
+dates <- as.Date("2017-01-01") + 0:100
+dates
+
+```
+
+
+##xts and zoo objects
 
 * xts- eXtensible Time Series. It is a matrix that has times that are associated with each observation
 * zoo object- is a matrix object with a vector of times that corresponds to each row. These represent observations in time
 * xts function allows you to create an xts matrix
 
-```{r}
+
+###xts- this creates an xts matrix
 xts(x = NULL,
-    order.by = index(x),
+    order.by = index(x), #This has to be the same length (i.e., number of rows) as x, be a time or date object, and be in increasing order
     frequency = NULL,
     unique = NULL, #This will force times to be unique
     tzone = Sys.getenv("TZ")) #this specifies the time zone of the time series
-```
+
+###coredata- this is how you get the raw matrix back
+coredata(x, fmt = FALSE)
+
+###index- this is how you get the index (i.e., times) back
+index(x)
 
 
-## Example
+
+## Creating an xts matrix
 ```{r}
 #xts = matrix + index (idx). Note that the index should have earlier time observations at the top of the vector and later time observations at the bottom of the vector. If you dont do this then xts() will automatically order the time observations from oldest to newest
 
@@ -39,9 +64,98 @@ x
 idx <- as.Date(c("2015-01-01", "2015-02-01")) #note that idx can be any class of time
 idx
 
-#Now join these to create the xts object
+#Now join these to create the xts object the raw
 X <- xts(x, order.by = idx) #This is saying to create an xts and order the files by date
 X
 
 ```
+
+# Create a time series matrix and then view the components
+```{r}
+# object with 10 random numbers
+data <- rnorm(10)
+data
+
+# Create dates as a Date class object starting from 2017-01-01
+dates <- seq(as.Date("2017-01-01"), length = 10, by = "days")
+dates
+
+# xts() to create a
+a <- xts(x = data, order.by = dates)
+a
+
+# Create bday (2017-01-02) using a POSIXct date class object
+bday <- as.POSIXct("2017-01-02")
+
+# Create hayek and add a new attribute called born
+xts_data <- xts(x = data, order.by = dates, born = bday)
+xts_data
+
+#Now you can extract parts of the xts file
+
+
+#Look at the core of xts_data
+xts_data_core <- coredata(xts_data)
+xts_data_core
+
+# View its class
+class(xts_data_core) #This shows that the class are the numeric obervations from the rnorm(10) data
+
+#Look at the index of xts_data
+xts_data_index <- index(xts_data)
+xts_data_index
+
+# View the class of hayek_index
+class(xts_data) #This shows that the class is the time observations from the dates
+```
+
+#Importing, Exporting, and Converting Time Series
+
+* Data often needs to be imported into R and then converted to an xts format
+
+##Convert to xts
+
+* You can convert a dataframe to xts by using as.xts(). This will work in most cases
+
+###Example
+```{r}
+data(sunspots)
+
+class(sunspots)
+
+#Convert the sunspots file into xts
+sunspots_xts <- as.xts(sunspots)
+head(sunspots_xts)
+
+class(sunspots_xts)
+
+plot(sunspots_xts)
+
+```
+
+##Import and Convert to xts
+
+* You can inport and convert to xts in one step by using as.xts(read.table("file")) or as.xts(read.zoo("file"))
+
+##Exporting
+
+* You can use write.zoo(file_name, "file_location") or saveRDS(file_name, "file_location")
+
+
+
+
+
+#Time Based Queries
+
+* xts supports the international standard for date and time called, ISO 8601:2004
+    + move left to right from most significant to least significant digit (i.e., changing the first digit would be a greater leap in time than moving the last digit)
+    + This includes a four digit year, two digit month, two digit day, two digit hours, two digit minutes, and two digit seconds "YYYY-MM-DDTHH:MM:SS"
+        + You could specify just the year, but not just the month
+
+
+
+
+
+
+
 

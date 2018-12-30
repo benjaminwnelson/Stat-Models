@@ -9,3 +9,39 @@ output: html_document
 This includes notes taken from the Data Camp Course Manipulating Time Series Data in R with xts & zoo
 https://www.datacamp.com/courses/manipulating-time-series-data-in-r-with-xts-zoo
 
+#Load Packages
+```{r}
+library(psych); library(xts)
+```
+
+#xts and zoo objects
+
+* xts- eXtensible Time Series. It is a matrix that has times that are associated with each observation
+* zoo object- is a matrix object with a vector of times that corresponds to each row. These represent observations in time
+* xts function allows you to create an xts matrix
+
+```{r}
+xts(x = NULL,
+    order.by = index(x),
+    frequency = NULL,
+    unique = NULL, #This will force times to be unique
+    tzone = Sys.getenv("TZ")) #this specifies the time zone of the time series
+```
+
+
+## Example
+```{r}
+#xts = matrix + index (idx). Note that the index should have earlier time observations at the top of the vector and later time observations at the bottom of the vector. If you dont do this then xts() will automatically order the time observations from oldest to newest
+
+x <- matrix(1:4, ncol = 2, nrow = 2)
+x
+
+idx <- as.Date(c("2015-01-01", "2015-02-01")) #note that idx can be any class of time
+idx
+
+#Now join these to create the xts object
+X <- xts(x, order.by = idx) #This is saying to create an xts and order the files by date
+X
+
+```
+

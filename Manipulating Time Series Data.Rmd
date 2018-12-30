@@ -1,0 +1,11 @@
+---
+title: "Manipulating Time Series Data"
+author: "Benjamin W Nelson"
+date: "12/30/2018"
+output: html_document
+---
+
+#Note
+This includes notes taken from the Data Camp Course Manipulating Time Series Data in R with xts & zoo
+https://www.datacamp.com/courses/manipulating-time-series-data-in-r-with-xts-zoo
+

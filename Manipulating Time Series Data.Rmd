@@ -21,6 +21,7 @@ library(psych); library(xts); library(zoo)
 ```{r}
 #create a time series vector called dates
 
+<<<<<<< HEAD
 #Option 1
 dates <- seq(as.Date("2017-01-01"), length = 100, by = "days") #This creates a vector that starts at the date entered that is followed by days that allows there to be 100 date observations. length = x specifies the length of the vector. by = "" specifies whether each subsequent observation is by day, week, etc.
 dates
@@ -33,25 +34,48 @@ dates
 
 
 ##xts and zoo objects
+=======
+dates <- seq(as.Date("2017-01-01"), length = 100, by = "days") #This creates a vector that starts at the date entered that is followed by days that allows there to be 100 date observations. length = x specifies the length of the vector. by = "" specifies whether each subsequent observation is by day, week, etc.
+dates
+
+```
+
+
+#xts and zoo objects
+>>>>>>> 3d17f7e4a22a33acd5d83563039c3840881f1f6b
 
 * xts- eXtensible Time Series. It is a matrix that has times that are associated with each observation
 * zoo object- is a matrix object with a vector of times that corresponds to each row. These represent observations in time
 * xts function allows you to create an xts matrix
 
+<<<<<<< HEAD
 
 ###xts- this creates an xts matrix
+=======
+```{r}
+#xts- this creates an xts matrix
+>>>>>>> 3d17f7e4a22a33acd5d83563039c3840881f1f6b
 xts(x = NULL,
     order.by = index(x), #This has to be the same length (i.e., number of rows) as x, be a time or date object, and be in increasing order
     frequency = NULL,
     unique = NULL, #This will force times to be unique
     tzone = Sys.getenv("TZ")) #this specifies the time zone of the time series
 
+<<<<<<< HEAD
 ###coredata- this is how you get the raw matrix back
 coredata(x, fmt = FALSE)
 
 ###index- this is how you get the index (i.e., times) back
 index(x)
 
+=======
+#coredata- this is how you get the raw matrix back
+coredata(x, fmt = FALSE)
+
+#index- this is how you get the index (i.e., times) back
+index(x)
+```
+>>>>>>> 3d17f7e4a22a33acd5d83563039c3840881f1f6b
 
 
 ## Creating an xts matrix
@@ -109,6 +133,7 @@ xts_data_index
 class(xts_data) #This shows that the class is the time observations from the dates
 ```
 
+<<<<<<< HEAD
 #Importing, Exporting, and Converting Time Series
 
 * Data often needs to be imported into R and then converted to an xts format
@@ -151,6 +176,8 @@ plot(sunspots_xts)
     + move left to right from most significant to least significant digit (i.e., changing the first digit would be a greater leap in time than moving the last digit)
     + This includes a four digit year, two digit month, two digit day, two digit hours, two digit minutes, and two digit seconds "YYYY-MM-DDTHH:MM:SS"
         + You could specify just the year, but not just the month
+=======
+>>>>>>> 3d17f7e4a22a33acd5d83563039c3840881f1f6b
 
 
 
